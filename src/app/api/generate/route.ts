@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import QRCode from 'qrcode';
 import { GoogleGenAI } from '@google/genai';
-import { supabase } from '@/lib/supabase';
+// import { supabase } from '@/lib/supabase';
 
 // ✅ Validate environment variable properly
 function getEnv(name: string): string {
@@ -107,23 +107,6 @@ export async function POST(request: Request) {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
 
-    // ✅ Insert into Supabase (only allowed columns)
-    const { error: dbError } = await supabase.from('cards').insert([
-      {
-        name: cardData.name,
-        role: cardData.role,
-        skills: cardData.skills,
-        cv_pdf_url: cvLink,
-        public_slug: slug,
-      },
-    ]);
-
-    if (dbError) {
-      console.error('Supabase Error:', dbError.message);
-      // Not failing request because frontend can still use response
-    }
-
-    // ✅ Final response
     return NextResponse.json({
       ...cardData,
       qrCode,
